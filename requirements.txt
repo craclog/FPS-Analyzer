@@ -1,0 +1,12 @@
+# requirements.txt
+
+# GUI
+PyQt5==5.15.10
+PyQtWebEngine==5.15.6
+
+
+# Data visualization
+plotly==5.21
+
+# Video processing
+ffmpeg-python==0.2.0
