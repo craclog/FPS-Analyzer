@@ -3,13 +3,17 @@ from PyQt5.QtWidgets import QApplication
 from video_analyzer import VideoAnalyzer
 from plotly_window import PlotlyWindow
 from logger import setup_logger
+from timer import timer_decorator
 
 WINDOW_INSTANCE = None
 logger = setup_logger()
 
+@timer_decorator
 def analyzeVideo(videoPath):
+    logger.info("Starting to analyze video: %s", videoPath)
     analyzer = VideoAnalyzer(videoPath)
     rawHtml = analyzer.generateHtmlFile()
+    logger.info("Finished analyzing video: %s", videoPath)
     return rawHtml
 
 def onFileOpened(fileName):
