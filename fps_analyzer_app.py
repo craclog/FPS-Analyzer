@@ -10,6 +10,15 @@ logger = setup_logger()
 
 @timer_decorator
 def analyze_video(video_path):
+    """
+    Analyzes a video file and generates an HTML report.
+
+    Parameters:
+    - video_path (str): The path to the video file to be analyzed.
+
+    Returns:
+    - str: The raw HTML content of the generated report.
+    """
     logger.info("Starting to analyze video: %s", video_path)
     analyzer = VideoAnalyzer(video_path)
     raw_html = analyzer.generate_html_file()
@@ -19,6 +28,16 @@ def analyze_video(video_path):
 def on_file_opened(file_name):
     """
     Slot that is called when a file is opened in the PlotlyWindow app.
+
+    Parameters:
+    - file_name (str): The name of the file that was opened.
+
+    Description:
+    This method is a slot that is called when a file is opened in the PlotlyWindow app.
+    It logs the name of the opened file, analyzes the video using the analyze_video function,
+    and sets up the browser in the WINDOW_INSTANCE with the raw HTML obtained from the analysis.
+    If an exception occurs during the analysis, it logs the error and opens an error dialog in the
+    WINDOW_INSTANCE.
     """
     logger.info("A file was opened: %s", file_name)
     try:
