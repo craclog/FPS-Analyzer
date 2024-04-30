@@ -2,8 +2,10 @@ import sys
 from PyQt5.QtWidgets import QApplication
 from video_analyzer import VideoAnalyzer
 from plotly_window import PlotlyWindow
+from logger import setup_logger
 
 WINDOW_INSTANCE = None
+logger = setup_logger()
 
 def analyzeVideo(videoPath):
     analyzer = VideoAnalyzer(videoPath)
@@ -14,12 +16,13 @@ def onFileOpened(fileName):
     """
     Slot that is called when a file is opened in the PlotlyWindow app.
     """
-    print(f"A file was opened: {fileName}")
+    logger.info("A file was opened: %s", fileName)
     try:
         rawHtml = analyzeVideo(fileName)
         WINDOW_INSTANCE.setupBrowser(rawHtml)
     except Exception as e:
-        print(f"Failed to analyze video: {e}")
+        logger.error("Type of error: %s", type(e).__name__)
+        logger.error("Failed to analyze video: %s", e)
         WINDOW_INSTANCE.openFileOpenErrorDialog(e)
 
 def main():

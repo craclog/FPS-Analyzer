@@ -2,6 +2,8 @@ from PyQt5.QtWidgets import QMainWindow, QFileDialog, QAction, QLabel, QMessageB
 from PyQt5.QtWebEngineWidgets import QWebEngineView
 from PyQt5.QtCore import pyqtSignal, Qt
 from PyQt5.QtGui import QFont
+from logger import setup_logger
+
 
 class PlotlyWindow(QMainWindow):
     """
@@ -14,6 +16,7 @@ class PlotlyWindow(QMainWindow):
         Initialize the window with the provided raw HTML.
         """
         super().__init__()
+        self.logger = setup_logger()
         self.rawHtml = rawHtml
         self.fileName = None
         self.initializeUI()
@@ -70,7 +73,7 @@ class PlotlyWindow(QMainWindow):
         fileName, _ = QFileDialog.getOpenFileName(self, "QFileDialog.getOpenFileName()", "", "All Files (*)",
                                                   options=options)
         if fileName:
-            print(f"Selected file: {fileName}")
+            self.logger.info("Selected file: %s", fileName)
             self.fileName = fileName
             self.fileOpened.emit(fileName)
 

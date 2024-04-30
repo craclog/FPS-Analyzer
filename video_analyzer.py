@@ -1,10 +1,12 @@
 import ffmpeg
 import plotly.graph_objects as go
 import plotly.io as pio
+from logger import setup_logger
 
 class VideoAnalyzer:
     def __init__(self, videoPath):
         self.videoPath = videoPath
+        self.logger = setup_logger()
         try:
             self.frameDtsTime, self.framePtsTime, self.frameDurationMs, self.fps = self.extractFrameInfo()
             self.figure = None
@@ -13,7 +15,7 @@ class VideoAnalyzer:
             self.frameDtsTimeDurations = self.calculateDurations(self.frameDtsTime)
             self.framePtsTimeDurations = self.calculateDurations(self.framePtsTime)
         except ffmpeg.Error as e:
-            print(f"Failed to initialize VideoAnalyzer: {e}")
+            self.logger.error("Failed to initialize VideoAnalyzer: %s", e)
 
     def calculateFps(self, avgFrameRate):
         numerator, denominator = map(int, avgFrameRate.split('/'))
@@ -23,12 +25,12 @@ class VideoAnalyzer:
         probe = ffmpeg.probe(self.videoPath, select_streams='v:0', show_entries='packet=dts_time,pts_time,duration_time')
         frameDtsTimeMs = [float(packet['dts_time']) * 1000 for packet in probe['packets']]
         framePtsTimeMs = [float(packet['pts_time']) * 1000 for packet in probe['packets']]
-        print(f"frameDtsTimeMs: {frameDtsTimeMs[:5]}")
-        print(f"framePtsTimeMs: {framePtsTimeMs[:5]}")
+        self.logger.debug("frameDtsTimeMs: %s", frameDtsTimeMs[:5])
+        self.logger.debug("framePtsTimeMs: %s", framePtsTimeMs[:5])
 
         # Convert duration_time to milliseconds
         frameDurationMs = [float(packet['duration_time']) * 1000 for packet in probe['packets']]
-        print(f"frameDurationMs: {frameDurationMs[:5]}")
+        self.logger.debug("frameDurationMs: %s", frameDurationMs[:5])
         avgFrameRate = probe['streams'][0]['avg_frame_rate']
         fps = self.calculateFps(avgFrameRate)
         return frameDtsTimeMs, framePtsTimeMs, frameDurationMs, fps
