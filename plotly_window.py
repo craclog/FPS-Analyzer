@@ -4,32 +4,31 @@ from PyQt5.QtCore import pyqtSignal, Qt
 from PyQt5.QtGui import QFont
 from logger import setup_logger
 
-
 class PlotlyWindow(QMainWindow):
     """
     A QMainWindow subclass that displays a Plotly plot using QWebEngineView.
     """
-    fileOpened = pyqtSignal(str)
+    file_opened = pyqtSignal(str)
 
-    def __init__(self, rawHtml=None):
+    def __init__(self, raw_html=None):
         """
         Initialize the window with the provided raw HTML.
         """
         super().__init__()
         self.logger = setup_logger()
-        self.rawHtml = rawHtml
-        self.fileName = None
-        self.initializeUI()
+        self.raw_html = raw_html
+        self.file_name = None
+        self.initialize_ui()
 
-    def initializeUI(self):
+    def initialize_ui(self):
         """
         Initialize the user interface.
         """
-        self.configureWindow()
-        self.setupMenu()
-        self.setupInitialMessageLabel()
+        self.configure_window()
+        self.setup_menu()
+        self.setup_initial_message_label()
 
-    def setupInitialMessageLabel(self):
+    def setup_initial_message_label(self):
         """
         Set up the initial message.
         """
@@ -40,15 +39,15 @@ class PlotlyWindow(QMainWindow):
         label.setAlignment(Qt.AlignCenter)
         self.setCentralWidget(label)
 
-    def setupBrowser(self, rawHtml):
+    def setup_browser(self, raw_html):
         """
         Set up the QWebEngineView.
         """
         self.browser = QWebEngineView()
-        self.browser.setHtml(rawHtml)
+        self.browser.setHtml(raw_html)
         self.setCentralWidget(self.browser)
 
-    def configureWindow(self):
+    def configure_window(self):
         """
         Configure the window settings.
         """
@@ -56,35 +55,35 @@ class PlotlyWindow(QMainWindow):
         self.setGeometry(100, 100, 800, 600)
         self.show()
 
-    def setupMenu(self):
+    def setup_menu(self):
         """
         Set up the menu.
         """
-        openFile = QAction('Open File', self)
-        openFile.triggered.connect(self.openFileNameDialog)
-        fileMenu = self.menuBar().addMenu('File')
-        fileMenu.addAction(openFile)
+        open_file = QAction('Open File', self)
+        open_file.triggered.connect(self.open_file_name_dialog)
+        file_menu = self.menuBar().addMenu('File')
+        file_menu.addAction(open_file)
 
-    def openFileNameDialog(self):
+    def open_file_name_dialog(self):
         """
         Open a file dialog and print the selected file path.
         """
         options = QFileDialog.Options()
-        fileName, _ = QFileDialog.getOpenFileName(self, "QFileDialog.getOpenFileName()", "", "All Files (*)",
+        file_name, _ = QFileDialog.getOpenFileName(self, "QFileDialog.getOpenFileName()", "", "All Files (*)",
                                                   options=options)
-        if fileName:
-            self.logger.info("Selected file: %s", fileName)
-            self.fileName = fileName
-            self.fileOpened.emit(fileName)
+        if file_name:
+            self.logger.info("Selected file: %s", file_name)
+            self.file_name = file_name
+            self.file_opened.emit(file_name)
 
-    def openFileOpenErrorDialog(self, e):
+    def open_file_open_error_dialog(self, e):
         """
         Open a file open error dialog.
         """
         error_dialog = QMessageBox()
         error_dialog.setIcon(QMessageBox.Critical)
         error_dialog.setWindowTitle("Error")
-        error_dialog.setText(f"Failed to open file: {self.fileName}\n"
+        error_dialog.setText(f"Failed to open file: {self.file_name}\n"
                              "Check if the file is a video file.")
         error_dialog.setInformativeText(str(e))
         error_dialog.exec_()
